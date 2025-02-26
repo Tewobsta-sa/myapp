@@ -31,6 +31,8 @@ class Feed extends Model
                    ->exists();
     }
     
-
+    public function comment():HasMany{
+        return $this->hasMany(comment::class);
+    }
     
 }

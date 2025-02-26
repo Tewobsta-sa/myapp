@@ -9,6 +9,7 @@ use Illuminate\Foundation\Providers\FoundationServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\like;
+use App\Models\Comment;
 
 class FeedController extends Controller
 {
@@ -61,4 +62,30 @@ class FeedController extends Controller
 
         
     }
+
+    public function comment(Request $request, $feed_id){
+
+        $request->validate([
+            'body' => 'required|string|min:1'
+        ]);
+
+        $comment=Comment::create([
+            'user_id' => Auth::id(),
+            'feed_id' => $feed_id,
+            'body' => $request->body
+        ]);
+
+        return response([
+            'message' => 'success'
+        ], 201);
+   }
+
+   public function getComments($feed_id){
+    $comments = Comment::with(['user', 'feed'])->whereFeedId($feed_id)->latest()->get();
+
+    return response([
+        'comments'=>$comments
+    ] ,200);
+   }
+
 }
